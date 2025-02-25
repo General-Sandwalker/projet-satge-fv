@@ -13,13 +13,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $repo = $_POST['repo'];
     if ($plan_duration === '6 months') {
         $price = 500;
+        $datetime = new DateTime();
+        $datetime->modify('+6 months');
+        $renewal_date = $datetime->format('Y-m-d');
     } else {
         $price = 1000;
+        $datetime = new DateTime();
+        $datetime->modify('+1 year');
+        $renewal_date = $datetime->format('Y-m-d');
     }
 
-    $sql = "INSERT INTO websites (name, client_id, plan_duration,  price, repo) VALUES (?, ?, ?,  ?, ?)";
+    $sql = "INSERT INTO websites (name, client_id, plan_duration,  price, repo, renewal_date) VALUES (?, ?, ?,  ?, ?, ?)";
     if ($statement = $connection->prepare($sql)) {
-        $statement->bind_param("sssss", $name, $client_id, $plan_duration,  $price, $repo);
+        $statement->bind_param("ssssss", $name, $client_id, $plan_duration,  $price, $repo, $renewal_date);
         if ($statement->execute()) {
             $successMessage = "<div class='text-green-500 text-center mt-4'>Website deployed successfully!</div>";
         } else {
